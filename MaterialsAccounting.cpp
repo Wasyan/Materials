@@ -8,10 +8,23 @@
 //
 //
 
+bool operator == (const Material &a, const Material &b){
+	return *a == *b;
+}
+bool operator > (const Material &a, const Material &b){
+	return *a > *b;
+}
+bool operator < (const Material &a, const Material &b){
+	return *b > *a;
+}
+
 bool TreeMaterial::remove(string name){
 
+	/*auto a=children.begin();
+	children.find(*a)*/
+
 	bool good; //variable for success, true - item found
-	auto tmp( children.find(name) );
+	auto tmp( children.find( name ) );
 	if(tmp==children.end()){ // needed item nod found
 		good=false;
 	}else{
@@ -23,27 +36,17 @@ bool TreeMaterial::remove(string name){
 
 void TreeMaterial::doGroup(string name){
 
-	//Material material( children.find(name)->second.get() );
-	auto tmp( children.find(name) );
+	//
+	auto tmp( children.find( name ) );
 	if( tmp!=children.end() ){
-		SingleMaterial *single=dynamic_cast<SingleMaterial*> (tmp->second.get());
+		SingleMaterial *single=getSingle(tmp->second.get());
 			// if convert in tree material failure then this item single material
 		if(single){
 			//do group
 			TreeMaterial* tree= new TreeMaterial(name);
-			//cout << tree->getName() << '\n';
 			tree->add(" ", single->getAmount() );
 			children.erase(tmp);
 			children.insert( make_pair(name, tree) );
-			/*cout << "tree space:\n" << (*tree)[" "]->getName() << "\n";
-			cout << "\ntree->name:\n" <<  tree->getName() << "\n";
-			cout << "\nname:\n" <<  name << "\n";
-			cout << "\nchildren->getname():\n" << children[name]->getName() << "\n";
-			cout << "\nchildren->getname():\n" << (*dynamic_cast <TreeMaterial*> (children[name].get() ))[" "]->getName() << "\n";
-			cout << "tree space:\n" << (*tree)[" "]->getName() << "\n";*/
-			//children
-			//children[name].reset( tree );
-			//cout << children[name]->getName() <<'\n';
 		}
 
 	}else{
@@ -55,16 +58,16 @@ void TreeMaterial::doGroup(string name){
 }
 
 void TreeMaterial::print(ostream & out){
-		printTree(getName(),out);
+		print(getName(),out);
 }
 
-void TreeMaterial::printTree(string full_name, ostream & out){
+void TreeMaterial::print(string full_name, ostream & out){
 
 	for( auto i=children.begin()  ; i!=children.end() ; ++i ){
-		TreeMaterial *tree=dynamic_cast<TreeMaterial*> ( (i->second).get() );
+		TreeMaterial *tree=getTree(i->second.get() );
 		if(tree!=0){
 			
-			tree->printTree(full_name+' '+tree->getName(),out);
+			tree->print(full_name+' '+tree->getName(),out);
 			
 		}else{
 			out << full_name+' ';
@@ -94,8 +97,139 @@ Material & TreeMaterial::operator[](string name){
 }
 
 void TreeManager::printTree(char *filename){
-	fstream f(filename, ios::binary | ios::out);
+	fstream f(filename, ios::out);
 	tree.print(f);
+	f.close();
+}
+
+TreeManager & getManager(){
+
+	static TreeManager tm; 
+	return tm; 
+}
+
+/*char *DataNotStructTM(){
+
+}*/
+
+UINT64 MaterialAccounting::putFile(fstream &out, UINT64 loc){
+
+	out.seekp(loc, ios::beg);
+	
+	unsigned char l= name.size();
+	//string str=char*l+getName();
+	out.write( (char*)&l , sizeof(l) );
+	out.write(name.c_str(), l*sizeof(char) ); //Put name current item
+	return l+1;
+}
+UINT64 MaterialAccounting::getFile(fstream &in, UINT64 loc){
+
+	char tmp[257];
+	unsigned char l;
+	UINT64 nByte=0;
+	in.seekg(loc, ios::beg);
+	in.read( (char*)&l, sizeof(l));
+	in.read( (char*)tmp, l);
+	tmp[l]=0;
+	name=tmp;
+	return l+1;
+
+}
+
+
+UINT64 SingleMaterial::putFile(fstream &out, UINT64 loc){
+
+	UINT64 nByte=MaterialAccounting::putFile(out, loc);
+	out.seekp(loc+nByte, ios::beg);
+	out.write( (char*)&amount , sizeof(amount));
+
+	return nByte+=sizeof(amount);
+}
+UINT64 SingleMaterial::getFile(fstream &in, UINT64 loc){
+
+	UINT64 nByte=MaterialAccounting::getFile(in, loc);
+	in.seekg(loc+nByte, ios::beg);
+	in.read( (char*)&amount , sizeof(amount));
+	
+	cout << " get amount: " << amount << '\n';
+
+	return nByte+=sizeof(amount);
+}
+
+UINT64 TreeMaterial::putFile(fstream & out, UINT64 loc){
+	//this function do writing children TreeMaterial in file out
+	UINT64 nByte=MaterialAccounting::putFile(out,loc);
+
+	//put count children info
+	auto count_children=children.size();
+	out.seekp(loc+nByte, ios::beg);
+	out.write( (char*)&count_children, sizeof(count_children));
+	//
+	nByte+=sizeof(count_children);
+
+	UINT64 posChildren=nByte;
+	bool typeChildren;	//true - child - tree, false - child - single
+
+	//"reserve" memory for byte children and type indicator
+	nByte+= ( sizeof(nByte)+sizeof(typeChildren) ) * children.size();
+	//posChildren - position children byte
+	//nByte - position first child
+	
+	UINT64 j=0;
+	for( auto i(children.begin())  ; i!=children.end() ; ++i, ++j ){
+	
+		out.seekp( loc+posChildren + ( sizeof(nByte) + sizeof(typeChildren) ) *  j, ios::beg);
+		out.write( (char*)&nByte, sizeof(nByte) );
+		cout << "put Bytechild: " << nByte << '\n';
+		typeChildren= (  getTree(i->second.get() ) != 0 );
+		out.write( (char*)&typeChildren, sizeof(typeChildren) );
+		nByte+=i->second->putFile(out,loc+nByte);
+		//nByte - position next child
+	}
+	return nByte;
+}
+UINT64 TreeMaterial::getFile(fstream &in, UINT64 loc){
+
+	UINT64 nByte;
+	in.seekg(loc, ios::beg);
+	nByte=MaterialAccounting::getFile(in, loc);
+	auto count_children=children.size();
+	
+	//get count children info
+	in.seekg(loc+nByte, ios::beg);
+	in.read( (char*)&count_children, sizeof(count_children));
+	nByte+=sizeof(count_children);
+	//nByte - pos byte info children
+	auto pos_children=nByte;
+	cout << "count children: " << count_children << '\n';
+	for(  unsigned int i = 0 ; i<count_children ;  ++i ){
+
+		//look for type child
+		bool type;
+		auto nByteChild=nByte;
+		in.seekg( loc + pos_children + i*( sizeof(nByte)+sizeof(type) ) , ios::beg);
+		in.read((char*)&nByteChild, sizeof(nByteChild) );
+		cout << "get Bytechild: " << nByteChild << '\n';
+		in.read((char*)&type, sizeof(type) );
+
+		cout << "\n--------\n" << nByteChild << ' ' << type << "\n-----------\n";
+
+		MaterialAccounting *ma= (type) ? (new TreeMaterial(" ")) : (MaterialAccounting *)(new SingleMaterial(" ",0));
+		nByte+=ma->getFile(in, nByteChild);
+		cout << "\n-----------\n" << ma->getName() << ' ' << type << "\n-----------\n";
+		children.insert( make_pair ( ma->getName(), ma ) );
+		
+	}
+	return nByte;
+}
+
+
+
+
+void TreeManager::putFileTree(char *filename){
+
+	fstream f(filename, ios::binary | ios::out);
+	tree.putFile(f, 0);
 	f.close();
 }
 

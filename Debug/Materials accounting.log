@@ -1,13 +1,11 @@
-﻿Построение начато 22.10.2015 14:40:58.
+﻿Построение начато 25.10.2015 4:55:26.
      1>Проект "D:\Programming\Project VS\Materials accounting\Materials accounting\Materials accounting.vcxproj" в узле 2 (целевые объекты build).
      1>InitializeBuildStatus:
          Создание "Debug\Materials accounting.unsuccessfulbuild", так как было задано "AlwaysCreate".
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt MaterialsAccounting.cpp main.cpp
-         main.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt MaterialsAccounting.cpp
          MaterialsAccounting.cpp
-     1>d:\programming\project vs\materials accounting\materials accounting\materialsaccounting.cpp(91): warning C4172: возвращение адреса локальной или временной переменной
-         Создание кода...
+     1>d:\programming\project vs\materials accounting\materials accounting\materialsaccounting.cpp(94): warning C4172: возвращение адреса локальной или временной переменной
        ManifestResourceCompile:
          Для всех выходных данных обновления не требуется.
        Link:
@@ -27,4 +25,4 @@
 
 Построение успешно завершено.
 
-Затраченное время: 00:00:01.51
+Затраченное время: 00:00:01.28

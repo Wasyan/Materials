@@ -19,7 +19,7 @@ int main(int argc, char *argv[]){
 	
 	if( argc > 1 && strcmp("console", *argv )==0 ){ // check for request terminale mode
 
-		/*TreeMaterial tm("all");
+		TreeMaterial tm("all");
 		tm.add("1/2all", 2);
 		tm.add("1/3all", 3);
 		tm.add("1/5all", 5);
@@ -30,9 +30,21 @@ int main(int argc, char *argv[]){
 		tm2->add("1/4all",4);
 	
 		tm.print(cout);
-		*/
-		TreeManager a;
+		
+		cout << "\n\n\n";
+		fstream f2("file.bin", ios::binary | ios::out);
+		UINT64 aa=tm.putFile(f2, 0);
+		f2.close();
 
+		fstream f("file.bin", ios::binary | ios::in);
+		TreeMaterial tree("all");
+		UINT64 bb=tree.getFile(f,0);
+		f.close();
+
+		tree.print(cout);
+
+		cout << '\n' << aa << ' ' << bb << '\n';
+		//getManager();
 	}
 	else{ //terminale mode not selected
 
