@@ -42,7 +42,7 @@ public:
 	const char * getName()const{return name.c_str();}
 	virtual void print(ostream &out)=0;
 	virtual UINT64 putFile(fstream &out, UINT64 location);
-	virtual UINT64 getFile(fstream &out, UINT64 location);
+	virtual UINT64 getFile(fstream &out, UINT64 location, int);
 };
 
 /*
@@ -67,7 +67,7 @@ public:
 	void addAmount(UINT64 inc){amount+=inc;}
 	void print(ostream& out){out << getName() << " - " << amount << '\n';}
 	UINT64 putFile(fstream &out, UINT64 location);
-	UINT64 getFile(fstream &out, UINT64 location);
+	UINT64 getFile(fstream &out, UINT64 location, int);
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ public:
 
 	void print(ostream &out);
 	UINT64 putFile(fstream &out, UINT64 location);
-	UINT64 getFile(fstream &out, UINT64 location);
+	UINT64 getFile(fstream &out, UINT64 location, int );
 
 	Material & operator[] (string name);
 

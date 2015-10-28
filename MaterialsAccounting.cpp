@@ -108,9 +108,6 @@ TreeManager & getManager(){
 	return tm; 
 }
 
-/*char *DataNotStructTM(){
-
-}*/
 
 UINT64 MaterialAccounting::putFile(fstream &out, UINT64 loc){
 
@@ -121,8 +118,9 @@ UINT64 MaterialAccounting::putFile(fstream &out, UINT64 loc){
 	out.write( (char*)&l , sizeof(l) );
 	out.write(name.c_str(), l*sizeof(char) ); //Put name current item
 	return l+1;
+
 }
-UINT64 MaterialAccounting::getFile(fstream &in, UINT64 loc){
+UINT64 MaterialAccounting::getFile(fstream &in, UINT64 loc, int g){
 
 	char tmp[257];
 	unsigned char l;
@@ -130,6 +128,7 @@ UINT64 MaterialAccounting::getFile(fstream &in, UINT64 loc){
 	in.seekg(loc, ios::beg);
 	in.read( (char*)&l, sizeof(l));
 	in.read( (char*)tmp, l);
+	//cout << "name:" << (int)l << "\n";
 	tmp[l]=0;
 	name=tmp;
 	return l+1;
@@ -145,13 +144,13 @@ UINT64 SingleMaterial::putFile(fstream &out, UINT64 loc){
 
 	return nByte+=sizeof(amount);
 }
-UINT64 SingleMaterial::getFile(fstream &in, UINT64 loc){
+UINT64 SingleMaterial::getFile(fstream &in, UINT64 loc, int g){
 
-	UINT64 nByte=MaterialAccounting::getFile(in, loc);
+	UINT64 nByte=MaterialAccounting::getFile(in, loc,g);
 	in.seekg(loc+nByte, ios::beg);
 	in.read( (char*)&amount , sizeof(amount));
 	
-	cout << " get amount: " << amount << '\n';
+	//cout << " get amount: " << amount << '\n';
 
 	return nByte+=sizeof(amount);
 }
@@ -178,9 +177,9 @@ UINT64 TreeMaterial::putFile(fstream & out, UINT64 loc){
 	UINT64 j=0;
 	for( auto i(children.begin())  ; i!=children.end() ; ++i, ++j ){
 	
+		auto adr=loc+nByte;
 		out.seekp( loc+posChildren + ( sizeof(nByte) + sizeof(typeChildren) ) *  j, ios::beg);
-		out.write( (char*)&nByte, sizeof(nByte) );
-		cout << "put Bytechild: " << nByte << '\n';
+		out.write( (char*)&adr, sizeof(nByte) );
 		typeChildren= (  getTree(i->second.get() ) != 0 );
 		out.write( (char*)&typeChildren, sizeof(typeChildren) );
 		nByte+=i->second->putFile(out,loc+nByte);
@@ -188,11 +187,11 @@ UINT64 TreeMaterial::putFile(fstream & out, UINT64 loc){
 	}
 	return nByte;
 }
-UINT64 TreeMaterial::getFile(fstream &in, UINT64 loc){
+UINT64 TreeMaterial::getFile(fstream &in, UINT64 loc, int g){
 
 	UINT64 nByte;
 	in.seekg(loc, ios::beg);
-	nByte=MaterialAccounting::getFile(in, loc);
+	nByte=MaterialAccounting::getFile(in, loc,g);
 	auto count_children=children.size();
 	
 	//get count children info
@@ -201,30 +200,23 @@ UINT64 TreeMaterial::getFile(fstream &in, UINT64 loc){
 	nByte+=sizeof(count_children);
 	//nByte - pos byte info children
 	auto pos_children=nByte;
-	cout << "count children: " << count_children << '\n';
-	for(  unsigned int i = 0 ; i<count_children ;  ++i ){
 
+	for(  unsigned int i = 0 ; i<count_children ;  ++i ){
 		//look for type child
 		bool type;
 		auto nByteChild=nByte;
 		in.seekg( loc + pos_children + i*( sizeof(nByte)+sizeof(type) ) , ios::beg);
 		in.read((char*)&nByteChild, sizeof(nByteChild) );
-		cout << "get Bytechild: " << nByteChild << '\n';
 		in.read((char*)&type, sizeof(type) );
+		MaterialAccounting *ma= ( type ) ? (new TreeMaterial(" ")) : (MaterialAccounting *)(new SingleMaterial(" ",0));
 
-		cout << "\n--------\n" << nByteChild << ' ' << type << "\n-----------\n";
-
-		MaterialAccounting *ma= (type) ? (new TreeMaterial(" ")) : (MaterialAccounting *)(new SingleMaterial(" ",0));
-		nByte+=ma->getFile(in, nByteChild);
-		cout << "\n-----------\n" << ma->getName() << ' ' << type << "\n-----------\n";
+		nByte+=ma->getFile(in, nByteChild,g+1);
 		children.insert( make_pair ( ma->getName(), ma ) );
 		
 	}
-	return nByte;
+
+	return nByte + (sizeof(nByte)+sizeof(bool) )*children.size();
 }
-
-
-
 
 void TreeManager::putFileTree(char *filename){
 
@@ -232,27 +224,3 @@ void TreeManager::putFileTree(char *filename){
 	tree.putFile(f, 0);
 	f.close();
 }
-
-/*
-void InputMaterial(Materials & input){
-
-	Symbol s[256];
-	Counter c;
-	cin >> s >> c;
-
-	input.count=c;
-	input.length=strlen(s);
-	input.childrenBytes=0;
-	input.nChildren=0;
-	input.childrenBytes=0;
-
-}
-
-////////////////////////////////////////////////
-
-void CreateNewBase(const char *name){
-	fstream f(name, ios::binary | ios::out);
-	unsigned long long size=sizeof (long long);
-	f.write( (const char*)&size, sizeof(long long));
-	f.close();
-}*/
