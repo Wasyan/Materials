@@ -22,56 +22,34 @@ int main(int argc, char *argv[]){
 	
 	if( argc > 1 && strcmp("console", *argv )==0 ){ // check for request terminale mode
 
-		fstream f3("file3.bin", ios::binary | ios::out);
-		f3.seekp(0,ios::beg);
-		UINT64 a=7;
-		f3.write( (char*)&a , 8 );
-		f3.write( (char*)&a , 8 );
-		f3.write( (char*)&a , 8 );
-		f3.write( (char*)&a , 8 );
-		f3.write( (char*)&a , 8 );
-		f3.write( (char*)&a , 8 );
-		f3.write( (char*)&a , 8 );
+		TreeMaterial tm("111");
+		tm.add("1111", 3);
+		tm.add("1113", 5);
+		tm.add("1114", 7);
+		tm.add("1112", 11);
+		TreeMaterial tm2("11");
+		tm2.add( tm );
+		tm2.add("112", 13);
+		tm2.add("113", 13);
+		tm2.add("114", 13);
+		tm2.add("115", 13);
+		TreeMaterial tm3("1");
+		tm3.add(tm2);
 
-		f3.close();
-		
-		TreeMaterial tm("all");
-		tm.add("1/2all", 2);
-		tm.add("1/3all", 3);
-		tm.add("1/5all", 5);
-		tm.add("1/7all", 7);
+		tm3.print(cout);
 
-		tm.doGroup("1/2all");
-		TreeMaterial* tm2 = tm.getTree("1/2all");
-		tm2->add("1/4all",4);
-		tm2->add("1/8all",8);
-		tm2->add("1/16all",16);
-
-		tm2->doGroup("1/8all");
-		TreeMaterial* tm3 = tm2->getTree("1/8all");
-		tm3->add("1/64all", 64);
-
-		TreeMaterial* tm4;
-		tm.doGroup("1/5all");
-		tm4 = tm.getTree("1/5all");
-		tm4->add("1/25all", 25);
-
-		tm.print(cout);
-	
-		
-		cout << "\n\n\n";
-		fstream f2("file.bin", ios::binary | ios::out);
-		UINT64 aa=tm.putFile(f2, 0);
-		f2.close();
-		
-		fstream f("file.bin", ios::binary | ios::in);
-		TreeMaterial tree("all");
-		UINT64 bb=tree.getFile(f,0,0);
+		fstream f("file.dat", ios::binary | ios::out);
+		tm3.putFile((fstream&)f,0);
 		f.close();
 
-		tree.print(cout);
+		TreeMaterial t("n");
 
-		cout << '\n' << aa << ' ' << bb << '\n';
+		f.open("file.dat", ios::binary | ios::in);
+		t.getFile((fstream&)f,0);
+		f.close();
+
+		t.print(cout);
+
 		//getManager();
 	}
 	else{ //terminale mode not selected
