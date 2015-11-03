@@ -1,19 +1,20 @@
-﻿Построение начато 30.10.2015 7:16:34.
+﻿Построение начато 03.11.2015 11:19:37.
      1>Проект "D:\Programming\Project VS\Materials accounting\Materials accounting\Materials accounting.vcxproj" в узле 2 (целевые объекты build).
      1>InitializeBuildStatus:
-         Создание "Debug\Materials accounting.unsuccessfulbuild", так как было задано "AlwaysCreate".
+         Обращение к "Debug\Materials accounting.unsuccessfulbuild".
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt MaterialsAccounting.cpp main.cpp
-         main.cpp
-         MaterialsAccounting.cpp
-         Создание кода...
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt ConsoleInterface.cpp
+         ConsoleInterface.cpp
+     1>d:\programming\project vs\materials accounting\materials accounting\consoleinterface.cpp(30): warning C4715: ConsoleInterface::genericParameters: значение возвращается не при всех путях выполнения
        ManifestResourceCompile:
          Для всех выходных данных обновления не требуется.
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Programming\Project VS\Materials accounting\Debug\Materials accounting.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\Materials accounting.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\Programming\Project VS\Materials accounting\Debug\Materials accounting.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\Programming\Project VS\Materials accounting\Debug\Materials accounting.lib" /MACHINE:X86 "Debug\Materials accounting.exe.embed.manifest.res"
+         Debug\ConsoleInterface.obj
          Debug\Errors.obj
          Debug\main.obj
          Debug\MaterialsAccounting.obj
+         Debug\TreeManager.obj
        Manifest:
          C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"Debug\Materials accounting.exe.embed.manifest" /manifest "Debug\Materials accounting.exe.intermediate.manifest"
          Для всех выходных данных обновления не требуется.
@@ -27,4 +28,4 @@
 
 Построение успешно завершено.
 
-Затраченное время: 00:00:01.86
+Затраченное время: 00:00:01.64

@@ -40,7 +40,15 @@ class NotCorrectCast : public Errors{
 
 };
 
+class NotDeletedObject : public Errors{
 
+};
+
+class NotCorrectCommand : public Errors{
+};
+
+class CommandNotExist : public NotCorrectCommand{
+};
 
 #endif
 

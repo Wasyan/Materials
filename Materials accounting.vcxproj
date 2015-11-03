@@ -74,11 +74,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ConsoleInterface.cpp" />
     <ClCompile Include="Errors.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MaterialsAccounting.cpp" />
+    <ClCompile Include="TreeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ConsoleInterface.h" />
     <ClInclude Include="Errors.h" />
     <ClInclude Include="MaterialsAccounting.h" />
   </ItemGroup>

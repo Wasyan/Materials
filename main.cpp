@@ -48,8 +48,10 @@ int main(int argc, char *argv[]){
 		t.getFile((fstream&)f,0);
 		f.close();
 
-		t.print(cout);
 
+
+		t.print(cout);
+		
 		//getManager();
 	}
 	else{ //terminale mode not selected

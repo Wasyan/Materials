@@ -19,6 +19,8 @@
 #include <set>
 #include <memory>	//shared_ptr
 #include <stack>
+#include <list>
+#include <sstream>
 
 //
 //
@@ -49,8 +51,8 @@ public:
 
 	const char * getName()const{return name.c_str();}
 	virtual void print(ostream &out)const=0;
-	virtual UINT64 putFile(fstream &out, UINT64 location)const;
-	virtual UINT64 getFile(fstream &out, UINT64 location);
+	virtual UINT64 putFile(fstream &out, UINT64 location=0)const;
+	virtual UINT64 getFile(fstream &out, UINT64 location=0);
 };
 
 /*
@@ -74,8 +76,8 @@ public:
 	UINT64 getAmount()const{return amount;}
 	void addAmount(UINT64 inc){amount+=inc;}
 	void print(ostream& out)const{out << getName() << " - " << amount << '\n';}
-	UINT64 putFile(fstream &out, UINT64 location)const;
-	UINT64 getFile(fstream &out, UINT64 location);
+	UINT64 putFile(fstream &out, UINT64 location=0)const;
+	UINT64 getFile(fstream &out, UINT64 location=0);
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -111,88 +113,67 @@ public:
 	void add(const Material &m){ children.insert( m );}
 	void add(const TreeMaterial &tm){ children.insert( new TreeMaterial(tm) ); }
 
-	void remove(const Material &m){ children.erase(m); }
+	void remove(const Material &m);
 	void remove(string name);
 
 	void print(ostream &out)const;
-	UINT64 putFile(fstream &in, UINT64 location)const;
-	UINT64 getFile(fstream &out, UINT64 location);
+	UINT64 putFile(fstream &in, UINT64 location=0)const;
+	UINT64 getFile(fstream &out, UINT64 location=0);
 
 	TreeMaterial *getTree(MaterialAccounting *item)const;
 	SingleMaterial *getSingle(MaterialAccounting *item)const;
 
+	TreeMaterial* get(){return this;}	//?
+	
+	Material operator[] (const string & name){return *search(name); } // !!add thorow
+
 };
 
-//bool operator == (const Material &, const Material &);
 
 /*
-class TreeMaterial : public MaterialAccounting{
+class TreeNode{
 private:
-
-	//map<string, Material> children;		//children this item
-	//set <Material> children;
-
-	void print(string full_name, ostream &out);
-
-protected:
-
-	friend MaterialAccounting *StringToMaterial(string name);
-
+	MaterialAccounting *ma;
 public:
-	set <Material> children;//////
-	explicit TreeMaterial(string name) : MaterialAccounting(name){}
-
-	void add(string name, UINT64 amount){ children.insert( Material(new SingleMaterial(name,amount)) );}
-	bool remove(string name);			// if fuction return false then item not remove
-
-	void doGroup(string name);			//single material convert in group material (TreeMaterial)
-
-	void print(ostream &out);
-	UINT64 putFile(fstream &out, UINT64 location);
-	UINT64 getFile(fstream &out, UINT64 location, int );
-
-	Material & operator[] (string name);
-
-	TreeMaterial* getTree(MaterialAccounting *ma){return dynamic_cast<TreeMaterial*>(ma);}	//convert from ptr base to ptr tree
-	TreeMaterial* getTree(string name){ 
-		return getTree( (*children.find( static_cast<Material>(StringToMaterial(name) ) ) ).get()  ); 
-	}	//convert son on parent.name
-
-	SingleMaterial *getSingle(MaterialAccounting *ma){ return dynamic_cast<SingleMaterial*>(ma); }
-	SingleMaterial* getSingle(string name){ return getSingle( (*children.find( static_cast<Material>(StringToMaterial(name) ) ) ).get()  ); }
-
-	
-
-	//set<Material>::iterator & find(Material &m)const{return children.find(m);}
-	//set<Material>::iterator & find(string name)const;//{return find();}
 
 };*/
 
-
-
 //Singletone class for management tree
-/*class TreeManager{
+class TreeManager{
 private:
 
-	TreeMaterial tree;	
-	Material current;
+	typedef list<Material> ParentStack;
 
+	TreeMaterial *treeObj;
+	Material tree;
+	ParentStack iterator;
 	
-	//blocked all possibility create object beyond class
-	TreeManager():tree(""){}
-	TreeManager(const TreeManager& ):tree(""){}
+	//blocked all possibility create object beyond this class
+	TreeManager():treeObj(new TreeMaterial("")), tree(treeObj) {}
+	TreeManager(const TreeManager& );
 	TreeManager & operator= (const TreeManager&t);
+
+	void instIterator();
 
 public:
 	
 	friend TreeManager&  getManager();		//get instance Manager
 	
-	void printTree(char *file_name);		//print tree in txt
-	void putFileTree(char *file_name);		//into binary
-	void getFileTree(char *file_name){}		//from binary
+	//operation for tree
+	void printTree(const char *file_name);		//print tree in txt
+	void putFileTree(const char *file_name);		//into binary
+	void getFileTree(const char *file_name);		//from binary
+	
+	//operation for iterator
+	void addChild(const string &name, UINT64 amount);
+	void go(const string &name);
+	void back();
+	void deleteChild(const string &name);
+	void deleteThis();//by deleteChild
+
 };
 
-*/
+
 /////////////////////
 
 #endif
