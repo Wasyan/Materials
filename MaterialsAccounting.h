@@ -27,6 +27,7 @@
 //
 
 #include "Errors.h"
+#include "ConsoleInterface.h"
 
 using namespace std;
 

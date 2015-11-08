@@ -8,7 +8,6 @@
 #include <string>
 #include <map>
 
-#include "MaterialsAccounting.h"
 
 /////////////////////////////////////
 
@@ -20,23 +19,28 @@ class Parameters{
 public:
 	virtual ~Parameters(){}
 	virtual void action(){}
-
+	virtual void setParameters(const string & buffer)=0;
 };
 class CommandLoadFile : public Parameters{
-private:
-	const char *filename;
+protected:
+	string fileName;
 public:
-	virtual void action();
+	void action();
+	void setParameters(const string & buffer);
 };
 
 class CommandSaveFile : public CommandLoadFile{
 public:
 	//const char *filename;
-	
+	void setParameters(const string & buffer){}
+	void action();
 };
 class CommandExitProgramm : public Parameters{
+	int code;
 public:
-	void action(){exit(0);}
+	void action(){exit(code);}
+	void setParameters(const string & buffer){return;}
+	CommandExitProgramm():code(0){}
 };
 
 /////////////////////////////////////////
@@ -46,7 +50,7 @@ private:
 
 	typedef string typeCommand;
 
-	enum CommandValue{CommandLoadValue, CommandSaveValue, CommandExitValue};
+	enum CommandValue{CommandLoadValue=7766, CommandSaveValue, CommandExitValue};
 	typeCommand command;
 
 	map<typeCommand, CommandValue> commandList;
@@ -58,6 +62,7 @@ private:
 public:
 
 	void getCommand();
+
 
 };
 

@@ -22,6 +22,9 @@ int main(int argc, char *argv[]){
 	
 	if( argc > 1 && strcmp("console", *argv )==0 ){ // check for request terminale mode
 
+#define T1EST_TREE_CODE
+
+#ifdef TEST_TREE_CODE
 		TreeMaterial tm("111");
 		tm.add("1111", 3);
 		tm.add("1113", 5);
@@ -52,7 +55,17 @@ int main(int argc, char *argv[]){
 
 		t.print(cout);
 		
+#else
+
+		try{
+			ConsoleInterface *ci=new ConsoleInterface();
+			ci->getCommand();
+		}
+		catch(...){
+			cout << "Unknown exception. Programm will be closed.\n";
+		}
 		//getManager();
+#endif
 	}
 	else{ //terminale mode not selected
 
