@@ -36,6 +36,10 @@ class NotCorrectAdress : public Errors{
 
 };
 
+class NotCorrectIndex : public Errors{
+
+};
+
 class NotCorrectCast : public Errors{
 
 };

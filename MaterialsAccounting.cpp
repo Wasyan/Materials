@@ -10,6 +10,34 @@
 //
 //
 //
+/*
+void TreeMaterial::remove(const string &name){
+
+	NodeTree removed(new TempMaterial(name) );
+	children.erase(removed);
+
+}
+
+void TreeMaterial::print(ostream & out)const{
+	string str( getName() );
+	print(out, str );
+}
+
+void TreeMaterial::print(ostream & out, string &full_name)const{
+
+	for( auto i=children.begin()  ; i!=children.end() ; ++i ){
+		try{
+			TreeMaterial *tree=getTree(  );
+			tree->print( out, full_name+' '+tree->getName() );
+		}
+		catch(NotCorrectCast &){
+			out << full_name+' ';
+			(*i)->print(out);
+			out << '\n';
+		}
+	}
+}
+*/
 
 bool operator == (const Material &a, const Material &b){
 	return *a == *b;
@@ -198,3 +226,4 @@ UINT64 SingleMaterial::getFile(fstream &in, UINT64 loc){
 
 	return nByte+=sizeof(amount);
 }
+//*/

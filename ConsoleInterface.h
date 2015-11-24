@@ -14,12 +14,13 @@
 using namespace std;
 
 /////////////////////////////////////
-
+// Pattern prototype, command
 class Parameters{
 public:
 	virtual ~Parameters(){}
-	virtual void action(){}
+	virtual void action()=0;
 	virtual void setParameters(const string & buffer)=0;
+	virtual Parameters *clone()=0;
 };
 class CommandLoadFile : public Parameters{
 protected:
@@ -27,6 +28,7 @@ protected:
 public:
 	void action();
 	void setParameters(const string & buffer);
+	Parameters *clone(){ return new CommandLoadFile(*this); }
 };
 
 class CommandSaveFile : public CommandLoadFile{
@@ -34,13 +36,15 @@ public:
 	//const char *filename;
 	void setParameters(const string & buffer){}
 	void action();
+	Parameters *clone(){ return new CommandSaveFile(*this); }
 };
-class CommandExitProgramm : public Parameters{
+class CommandExitProgram : public Parameters{
 	int code;
 public:
 	void action(){exit(code);}
 	void setParameters(const string & buffer){return;}
-	CommandExitProgramm():code(0){}
+	CommandExitProgram():code(0){}
+	Parameters *clone(){ return new CommandExitProgram(*this); }
 };
 
 /////////////////////////////////////////
@@ -53,16 +57,17 @@ private:
 	enum CommandValue{CommandLoadValue=7766, CommandSaveValue, CommandExitValue};
 	typeCommand command;
 
-	map<typeCommand, CommandValue> commandList;
+
+	map<typeCommand, shared_ptr<Parameters> > commandList;
 
 	void init();
 
-	Parameters * genericParameters(CommandValue &cv);
+	//Parameters * genericParameters(CommandValue &cv);
 
 public:
 
+	//loop program
 	void getCommand();
-
 
 };
 

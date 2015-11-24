@@ -93,21 +93,51 @@ public:
 
 ///////////////////////////////////////////////////////////////////
 
-class TreeMaterial : public MaterialAccounting{
+class NodeTree{
+private:
+	//bool cpy;
+	Material date;
+public:
 
+	explicit NodeTree(MaterialAccounting *ma) : date(ma){}
+
+	bool operator== (NodeTree &item)const{ return *date == *item.date; }
+	bool operator > (NodeTree &item)const{ return *date > *item.date; }
+	bool operator < (NodeTree &item)const{ return *item.date > *date; }
+	MaterialAccounting * operator-> (){return date.get();}
+	MaterialAccounting & operator* (){return *date;}
+
+	
+};
+
+class TreeMaterial : public MaterialAccounting{
 private:
 
 	set<Material> children;
 	set<Material>::iterator search(string name);
-
+	
+	/*
+	set<NodeTree>children;
+	*/
 protected:
-
+	/*
+	void print(ostream &out, string & full_name)const;
+	*/
 	void print(ostream &out, string & full_name)const;
 	TreeMaterial *getTree_(MaterialAccounting *ma)const{return dynamic_cast <TreeMaterial*> (ma); }
 	SingleMaterial *getSingle_(MaterialAccounting *ma)const{return dynamic_cast <SingleMaterial*> (ma); }
-
+	
 public:
+	/*explicit TreeMaterial(string name) : MaterialAccounting(name) {}
+	void add(const string & name, UINT64 amount){ children.insert( NodeTree(new SingleMaterial(name, amount) ) );}
+	void add(const NodeTree &node){ children.insert( node);}
 
+	//void remove(const Material &m);
+	void remove(const string & name);
+
+
+	void print(ostream &out)const;
+	*/
 	explicit TreeMaterial(string name) : MaterialAccounting(name) { children.key_comp(); }
 
 	void add(const string & name, UINT64 amount){ children.insert( Material(new SingleMaterial(name,amount)) );}
@@ -127,7 +157,7 @@ public:
 	TreeMaterial* get(){return this;}	//?
 	
 	Material operator[] (const string & name){return *search(name); } // !!add thorow
-
+	
 };
 
 

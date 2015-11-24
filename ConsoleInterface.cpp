@@ -8,14 +8,17 @@
 
 
 void ConsoleInterface::init(){
-
+	/*
 	commandList.insert( make_pair("load", CommandLoadValue) );
 	commandList.insert( make_pair("save", CommandSaveValue) );
 	commandList.insert( make_pair("exit", CommandExitValue) );
-
+	*/
+	commandList.insert( make_pair("load", new CommandLoadFile() ) );
+	commandList.insert( make_pair("save", new CommandSaveFile() ) );
+	commandList.insert( make_pair("exit", new CommandExitProgram() ) );
 }
 
-Parameters* ConsoleInterface::genericParameters(CommandValue &cv){
+/*Parameters* ConsoleInterface::genericParameters(CommandValue &cv){
 
 	switch(cv){
 	case CommandLoadValue:{return new CommandLoadFile();}
@@ -24,7 +27,7 @@ Parameters* ConsoleInterface::genericParameters(CommandValue &cv){
 	default: {throw NotCorrectAdress();}
 	};
 
-}
+}*/
 
 void CommandLoadFile::setParameters(const string & str){
 
@@ -58,12 +61,29 @@ void ConsoleInterface::getCommand(){
 	string buffer;
 	shared_ptr<Parameters> param;
 
+	while(getline(cin, buffer)) {
+
+		stream.str(buffer);
+		string name_command;
+		stream >> name_command;
+		puts( stream.str().c_str() );
+
+		//puts(buffer.c_str()) ;
+
+	}
+
+
+	/*
 	while(getline(cin,buffer)){
 		
 		stream.str(buffer);
 		string name_command;
+		buffer.clear();
 		stream >> name_command >> buffer;
-		param.reset(genericParameters(commandList[name_command]));
+		cout << buffer;
+		auto i = commandList.find(name_command);
+		if( i==commandList.end() ){throw NotCorrectIndex(); }
+		param.reset( i->second->clone() );
 		//if( dynamic_cast<CommandLoadFile*> ( param.get() ) ){cout << "aaa";}
 		//getline(stream,buffer);
 		param->setParameters( buffer );
@@ -73,5 +93,5 @@ void ConsoleInterface::getCommand(){
 		
 		buffer="";
 	}
-		
+		*/
 }
