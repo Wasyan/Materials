@@ -6,6 +6,11 @@
 
 //
 
+map< string, Parameters* > Parameters::prototypes;
+CommandSaveFile CommandSaveFile::prototype=CommandSaveFile(Dummy());
+CommandLoadFile CommandLoadFile::prototype=CommandLoadFile(Dummy());
+CommandExitProgram CommandExitProgram::prototype=CommandExitProgram(Dummy());
+
 
 void ConsoleInterface::init(){
 	/*
@@ -13,9 +18,9 @@ void ConsoleInterface::init(){
 	commandList.insert( make_pair("save", CommandSaveValue) );
 	commandList.insert( make_pair("exit", CommandExitValue) );
 	*/
-	commandList.insert( make_pair("load", new CommandLoadFile() ) );
+	/*commandList.insert( make_pair("load", new CommandLoadFile() ) );
 	commandList.insert( make_pair("save", new CommandSaveFile() ) );
-	commandList.insert( make_pair("exit", new CommandExitProgram() ) );
+	commandList.insert( make_pair("exit", new CommandExitProgram() ) );*/
 }
 
 /*Parameters* ConsoleInterface::genericParameters(CommandValue &cv){
