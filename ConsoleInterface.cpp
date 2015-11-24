@@ -29,15 +29,17 @@ void ConsoleInterface::init(){
 
 }*/
 
-void CommandLoadFile::setParameters(const string & str){
+void CommandLoadFile::setParameters(istringstream & str){
 
-	fileName=str;
+	str >> fileName;
+	if(fileName.size()==0){throw NotCorrectParameters();}
+	//fileName=str;
 
 }
 
 void CommandLoadFile::action(){
 	
-	getManager().putFileTree( fileName.c_str() );
+	getManager().getFileTree( fileName.c_str() );
 
 }
 /*
@@ -49,7 +51,7 @@ void CommandSaveFile::setParameters(const string & str){
 
 void CommandSaveFile::action(){
 
-	getManager().getFileTree( fileName.c_str() );
+	getManager().putFileTree( fileName.c_str() );
 
 }
 
@@ -61,14 +63,27 @@ void ConsoleInterface::getCommand(){
 	string buffer;
 	shared_ptr<Parameters> param;
 
-	while(getline(cin, buffer)) {
+	while(getline(cin, buffer)){
 
 		stream.str(buffer);
 		string name_command;
 		stream >> name_command;
-		puts( stream.str().c_str() );
+		
+		auto i = commandList.find(name_command);
+		if( i==commandList.end() ){throw NotCorrectIndex(); }
+		else{
+			param.reset( i->second->clone() );
+			param->setParameters( stream );
+			try{
+				param->action();
+			}
+			catch(ConsoleMessageErrors &me){
+				me.outputMessage();
+			}
+		}
 
-		//puts(buffer.c_str()) ;
+		stream.clear();
+		buffer="";
 
 	}
 

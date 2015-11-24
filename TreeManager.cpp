@@ -16,12 +16,18 @@ void TreeManager::printTree(const char *filename){
 }
 
 void TreeManager::getFileTree(const char *filename){
-	fstream f(filename, ios::out);
-	tree->getFile(f);
-	f.close();
+	fstream f(filename, ios::in);
+	if( f.is_open() ){
+		tree->getFile(f);
+		f.close();
+	}
+	else{
+		throw FileNotFound();
+	}
 }
 void TreeManager::putFileTree(const char *filename){
 	fstream f(filename, ios::out);
+	if( !f.is_open() ){throw FileNotCreate();}
 	tree->putFile(f);
 	f.close();
 }

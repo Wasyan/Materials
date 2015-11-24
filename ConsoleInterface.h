@@ -19,7 +19,7 @@ class Parameters{
 public:
 	virtual ~Parameters(){}
 	virtual void action()=0;
-	virtual void setParameters(const string & buffer)=0;
+	virtual void setParameters(istringstream & buffer)=0;
 	virtual Parameters *clone()=0;
 };
 class CommandLoadFile : public Parameters{
@@ -27,14 +27,14 @@ protected:
 	string fileName;
 public:
 	void action();
-	void setParameters(const string & buffer);
+	void setParameters(istringstream & buffer);
 	Parameters *clone(){ return new CommandLoadFile(*this); }
 };
 
 class CommandSaveFile : public CommandLoadFile{
 public:
 	//const char *filename;
-	void setParameters(const string & buffer){}
+	//void setParameters(istringstream & buffer){}
 	void action();
 	Parameters *clone(){ return new CommandSaveFile(*this); }
 };
@@ -42,7 +42,7 @@ class CommandExitProgram : public Parameters{
 	int code;
 public:
 	void action(){exit(code);}
-	void setParameters(const string & buffer){return;}
+	void setParameters(istringstream & buffer){return;}
 	CommandExitProgram():code(0){}
 	Parameters *clone(){ return new CommandExitProgram(*this); }
 };
